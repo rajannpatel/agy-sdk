@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "This SDK installs the Google Antigravity CLI (agy),"
+echo "which is subject to Google's Terms of Service at https://antigravity.google/terms."
+echo ""
+
+# Configure PATH through /etc/profile.d/agy.sh
+cat <<EOF >/etc/profile.d/agy.sh
+export PATH="${SDK}/bin:\$PATH"
+EOF

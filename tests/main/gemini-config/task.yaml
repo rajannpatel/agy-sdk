@@ -1,0 +1,23 @@
+summary: /home/workshop/.gemini exists and survives lifecycle operations
+
+prepare: |
+  envsubst '${BASE}' <workshop.yaml.in >workshop.yaml
+  workshop launch
+
+restore: |
+  workshop remove || true
+
+execute: |
+  # Verify directory exists and is writable by workshop user
+  workshop exec -- test -d /home/workshop/.gemini
+  workshop exec -- touch /home/workshop/.gemini/persist-test
+
+  # Run workshop restore to recreate container and re-mount directories
+  workshop restore
+
+  # Verify the file still exists inside the container since it is mount-backed
+  workshop exec -- test -f /home/workshop/.gemini/persist-test
+  workshop exec -- rm /home/workshop/.gemini/persist-test
+
+debug: |
+  workshop exec -- ls -la /home/workshop/.gemini || true

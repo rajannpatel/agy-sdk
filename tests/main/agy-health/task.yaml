@@ -1,0 +1,16 @@
+summary: workshop info reports the SDK status as ready
+
+prepare: |
+  envsubst '${BASE}' <workshop.yaml.in >workshop.yaml
+  workshop launch
+
+restore: |
+  workshop remove || true
+
+execute: |
+  # Verify that `workshop info` shows the workshop status as ready (indicating all SDK health checks succeeded)
+  workshop info | grep -E 'status:\s+ready'
+
+debug: |
+  workshop info
+  workshop tasks

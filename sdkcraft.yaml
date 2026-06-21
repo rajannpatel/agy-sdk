@@ -1,0 +1,43 @@
+name: agy
+title: Google Antigravity CLI SDK
+summary: Google Antigravity CLI wrapper SDK for Canonical Workshop
+description: |
+  This SDK is a community-maintained wrapper that installs Google's Antigravity CLI (agy)
+  inside a Canonical Workshop environment. It provides global access to the agy binary
+  and persists credential configuration across workshop updates.
+contact: https://github.com/rajannpatel/agy-sdk
+issues: https://github.com/rajannpatel/agy-sdk/issues
+source-code: https://github.com/rajannpatel/agy-sdk
+adopt-info: agy
+license: MIT AND Proprietary
+base: ubuntu@26.04
+platforms:
+  amd64:
+  arm64:
+plugs:
+  gemini-config:
+    interface: mount
+    workshop-target: /home/workshop/.gemini
+parts:
+  agy:
+    plugin: dump
+    source: .
+    source-type: local
+    override-pull: |
+      VERSION=$(cat "$CRAFT_PROJECT_DIR/VERSION")
+      craftctl set version="$VERSION"
+
+      case "$CRAFT_ARCH_BUILD_FOR" in
+        amd64) ARCH_SUFFIX="x64" ;;
+        arm64) ARCH_SUFFIX="arm64" ;;
+        *) echo "Unsupported architecture: $CRAFT_ARCH_BUILD_FOR" >&2; exit 1 ;;
+      esac
+
+      FILENAME="agy_cli_linux_${ARCH_SUFFIX}.tar.gz"
+      URL="https://github.com/google-antigravity/antigravity-cli/releases/download/${VERSION}/${FILENAME}"
+
+      curl -fLO "$URL"
+      tar -xzf "$FILENAME" -C "$CRAFT_PART_SRC"
+      rm "$FILENAME"
+    organize:
+      antigravity: bin/agy

@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ ! -f "${SDK}/bin/agy" ]]; then
+  workshopctl set-health --code="agy-not-installed" error "Google Antigravity CLI (agy) not installed."
+  exit 0
+fi
+
+if ! sudo -u workshop --login which agy >/dev/null 2>&1; then
+  workshopctl set-health --code="agy-not-in-path" error "Google Antigravity CLI (agy) not available on the \$PATH."
+  exit 0
+fi
+
+if ! output=$(sudo -u workshop --login agy --version 2>&1); then
+  workshopctl set-health --code="agy-broken" error "Google Antigravity CLI (agy) failed to execute: $output"
+  exit 0
+fi
+
+workshopctl set-health okay

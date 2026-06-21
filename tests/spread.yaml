@@ -1,0 +1,17 @@
+project: agy
+
+path: /home/ubuntu/project
+
+backends:
+  lxd:
+    systems:
+      - ubuntu-24.04:
+          username: ubuntu
+          vm: true
+
+suites:
+  main/:
+    summary: Test the agy SDK inside workshops
+    environment:
+      BASE/resolute: ubuntu@26.04
+      EXPECTED_VERSION: '$(HOST: cat "`git rev-parse --show-toplevel`/VERSION")'

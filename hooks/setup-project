@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Ensure the .gemini directory exists
+mkdir -p /home/workshop/.gemini
+
+# Run native setup/install as the workshop user
+"${SDK}/bin/agy" install

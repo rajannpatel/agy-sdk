@@ -5,6 +5,10 @@
 ARGS=()
 HAS_SANDBOX=false
 HAS_NO_SANDBOX=false
+IS_SUBCOMMAND=false
+
+# Known subcommands that don't accept global flags like --no-sandbox
+SUBCOMMANDS=(changelog help install models plugin plugins update)
 
 for arg in "$@"; do
   if [[ "$arg" == "--sandbox" ]]; then
@@ -12,11 +16,16 @@ for arg in "$@"; do
   elif [[ "$arg" == "--no-sandbox" ]]; then
     HAS_NO_SANDBOX=true
   fi
+  for sub in "${SUBCOMMANDS[@]}"; do
+    if [[ "$arg" == "$sub" ]]; then
+      IS_SUBCOMMAND=true
+    fi
+  done
   ARGS+=("$arg")
 done
 
-# If --sandbox isn't specified, and --no-sandbox isn't already specified, prepend --no-sandbox
-if [[ "$HAS_SANDBOX" == "false" && "$HAS_NO_SANDBOX" == "false" ]]; then
+# Only inject --no-sandbox for interactive/non-interactive modes, not subcommands
+if [[ "$HAS_SANDBOX" == "false" && "$HAS_NO_SANDBOX" == "false" && "$IS_SUBCOMMAND" == "false" ]]; then
   ARGS=("--no-sandbox" "${ARGS[@]}")
 fi
 

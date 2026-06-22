@@ -1,9 +1,5 @@
 # sdkcraft build artifacts
 *.sdk
-.spread-reuse.yaml
 
-# sdkcraft build lifecycle directories
-.craft/
-parts/
-prime/
-stage/
+# spread reuse state (created when a previous run leaves instances around)
+.spread-reuse.yaml

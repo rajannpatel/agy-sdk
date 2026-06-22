@@ -1,0 +1,35 @@
+name: Build and Upload SDK
+
+on:
+  push:
+    branches:
+      - latest
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch name (e.g., latest)"
+        required: true
+        type: string
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-upload:
+    strategy:
+      matrix:
+        include:
+          - platform: '["amd64"]'
+            runner: '["ubuntu-26.04"]'
+          - platform: '["arm64"]'
+            runner: '["ubuntu-26.04-arm64"]'
+    uses: canonical/sdkcraft-actions/.github/workflows/upload.yml@main
+    with:
+      platforms: ${{ matrix.platform }}
+      platform-flag: "--build-for"
+      runs-on: ${{ matrix.runner }}
+      track: "latest"
+      risk: "stable"
+    secrets:
+      SDKCRAFT_STORE_CREDENTIALS: ${{ secrets.SDKCRAFT_STORE_CREDENTIALS }}

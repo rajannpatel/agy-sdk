@@ -11,7 +11,7 @@ A minimal workshop:
 ```yaml
 # workshop.yaml
 name: dev
-base: ubuntu@26.04
+base: ubuntu@24.04
 sdks:
   - name: agy
     channel: latest/stable

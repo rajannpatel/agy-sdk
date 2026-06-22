@@ -1,4 +1,0 @@
-name: test-agy
-base: ${BASE}
-sdks:
-  - name: try-agy

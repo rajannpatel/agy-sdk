@@ -43,5 +43,8 @@ parts:
       curl -fLO "$URL"
       tar -xzf "$FILENAME" -C "$CRAFT_PART_SRC"
       rm "$FILENAME"
+    override-build: |
+      craftctl default
+      install -Dm755 "$CRAFT_PROJECT_DIR/bin/agy" "$CRAFT_PART_INSTALL/bin/agy"
     organize:
       antigravity: bin/agy-bin

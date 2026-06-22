@@ -176,7 +176,7 @@ jobs:
       platforms: '["amd64"]'
       risk: "stable"
     secrets:
-      SDKCRAFT_STORE_CREDENTIALS: ${{ secrets.SDKCRAFT_STORE_CREDENTIALS_STAGING }}
+      SDKCRAFT_STORE_CREDENTIALS: ${{ secrets.SDKCRAFT_STORE_CREDENTIALS }}
 ```
 
 ### upload.yml — multi-base SDK
@@ -190,7 +190,7 @@ jobs:
       platform-flag: "--platform"
       risk: "stable"
     secrets:
-      SDKCRAFT_STORE_CREDENTIALS: ${{ secrets.SDKCRAFT_STORE_CREDENTIALS_STAGING }}
+      SDKCRAFT_STORE_CREDENTIALS: ${{ secrets.SDKCRAFT_STORE_CREDENTIALS }}
 ```
 
 ### Branch pattern reference

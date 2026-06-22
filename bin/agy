@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Wrapper script for Google Antigravity CLI (agy) inside Canonical Workshop.
+# Automatically applies container-safe flags to run Chromium/browser components.
+
+ARGS=()
+HAS_SANDBOX=false
+HAS_NO_SANDBOX=false
+
+for arg in "$@"; do
+  if [[ "$arg" == "--sandbox" ]]; then
+    HAS_SANDBOX=true
+  elif [[ "$arg" == "--no-sandbox" ]]; then
+    HAS_NO_SANDBOX=true
+  fi
+  ARGS+=("$arg")
+done
+
+# If --sandbox isn't specified, and --no-sandbox isn't already specified, prepend --no-sandbox
+if [[ "$HAS_SANDBOX" == "false" && "$HAS_NO_SANDBOX" == "false" ]]; then
+  ARGS=("--no-sandbox" "${ARGS[@]}")
+fi
+
+# Locate the actual binary (installed as agy-bin in the same bin directory)
+REAL_AGY="$(dirname "$(readlink -f "$0")")/agy-bin"
+
+exec "$REAL_AGY" "${ARGS[@]}"

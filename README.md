@@ -19,6 +19,12 @@ sdks:
 actions:
   agy-prompt: agy -p "$@"
   agy-sandbox: agy -p "$@" --sandbox
+  agy-desktop: |
+    if [ -z "${WAYLAND_DISPLAY:-}" ] && [ -z "${DISPLAY:-}" ]; then
+      echo "Neither Wayland nor X11 display available; try 'workshop connect dev/agy:desktop'" >&2
+      exit 1
+    fi
+    agy --no-sandbox
 ```
 
 This demonstrates a basic environment setup to execute Antigravity CLI tasks
@@ -113,6 +119,15 @@ workshop exec -- agy --version
   workshop stop <workshop-name>
   workshop remount <workshop-name>/agy:gemini-config ~/.gemini
   workshop start <workshop-name>
+  ```
+
+### `desktop`
+
+- Interface: `desktop`
+- Purpose: Allows the Google Antigravity CLI to access the host's Wayland or X11 display server. This is required for running browser-based tasks or interactive GUI authentication. Connect it using:
+
+  ```bash
+  workshop connect <workshop-name>/agy:desktop
   ```
 
 ---

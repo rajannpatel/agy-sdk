@@ -18,6 +18,10 @@ plugs:
   gemini-config:
     interface: mount
     workshop-target: /home/workshop/.gemini
+  desktop:
+    interface: desktop
+  gpu:
+    interface: gpu
 parts:
   agy:
     plugin: dump
@@ -40,4 +44,4 @@ parts:
       tar -xzf "$FILENAME" -C "$CRAFT_PART_SRC"
       rm "$FILENAME"
     organize:
-      antigravity: bin/agy
+      antigravity: bin/agy-bin

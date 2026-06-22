@@ -1,0 +1,20 @@
+summary: agy-desktop action fails with a clear message when no display is available
+
+prepare: |
+  envsubst '${BASE}' <workshop.yaml.in >workshop.yaml
+  workshop launch
+
+restore: |
+  workshop remove || true
+
+execute: |
+  # The spread LXD backend runs headless — neither WAYLAND_DISPLAY nor DISPLAY
+  # will be set inside the container, so the agy-desktop action must fail with
+  # a human-readable error pointing to `workshop connect`.
+  output=$(workshop run -- agy-desktop 2>&1 || true)
+  echo "$output" | MATCH "workshop connect"
+  echo "$output" | MATCH "desktop"
+
+debug: |
+  workshop exec -- bash -lc 'echo DISPLAY=${DISPLAY:-} WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-}' || true
+  workshop tasks || true

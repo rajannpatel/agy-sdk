@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+if [[ ! -f "${SDK}/bin/agy-bin" ]]; then
+  workshopctl set-health --code="agy-bin-not-installed" error "Google Antigravity CLI upstream binary (agy-bin) not installed."
+  exit 0
+fi
+
 if [[ ! -f "${SDK}/bin/agy" ]]; then
-  workshopctl set-health --code="agy-not-installed" error "Google Antigravity CLI (agy) not installed."
+  workshopctl set-health --code="agy-not-installed" error "Google Antigravity CLI wrapper (agy) not installed."
   exit 0
 fi
 

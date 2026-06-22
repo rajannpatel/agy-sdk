@@ -1,0 +1,26 @@
+summary: agy wrapper script (bin/agy) and upstream binary (bin/agy-bin) are installed
+
+prepare: |
+  envsubst '${BASE}' <workshop.yaml.in >workshop.yaml
+  workshop launch
+
+restore: |
+  workshop remove || true
+
+execute: |
+  # Verify the wrapper script is present and executable
+  workshop exec -- bash -lc 'test -x "$(command -v agy)"'
+
+  # Verify the real upstream binary is installed alongside the wrapper
+  workshop exec -- bash -lc 'test -f "${SDK}/bin/agy-bin"'
+
+  # Confirm the wrapper resolves to bin/agy, not bin/agy-bin directly
+  workshop exec -- bash -lc 'command -v agy' | MATCH '/bin/agy$'
+
+  # The wrapper must not itself be the upstream binary —
+  # agy-bin should be a distinct file
+  workshop exec -- bash -lc '! cmp -s "${SDK}/bin/agy" "${SDK}/bin/agy-bin"'
+
+debug: |
+  workshop exec -- bash -lc 'ls -la "${SDK}/bin/"' || true
+  workshop exec -- bash -lc 'cat "${SDK}/bin/agy"' || true

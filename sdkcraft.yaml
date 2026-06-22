@@ -13,7 +13,11 @@ license: MIT AND Proprietary
 base: ubuntu@26.04
 platforms:
   amd64:
+    build-on: [amd64, arm64]
+    build-for: [amd64]
   arm64:
+    build-on: [amd64, arm64]
+    build-for: [arm64]
 plugs:
   gemini-config:
     interface: mount

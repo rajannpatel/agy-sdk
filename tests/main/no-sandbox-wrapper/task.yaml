@@ -1,4 +1,4 @@
-summary: agy wrapper script (bin/agy) and upstream binary (bin/agy-bin) are installed
+summary: agy wrapper script correctly injects --no-sandbox only for non-subcommand invocations
 
 prepare: |
   envsubst '${BASE}' <workshop.yaml.in >workshop.yaml
@@ -21,6 +21,25 @@ execute: |
   # agy-bin should be a distinct file
   workshop exec -- bash -lc '! cmp -s "${SDK}/bin/agy" "${SDK}/bin/agy-bin"'
 
+  # Install a mock agy-bin that prints its arguments, so we can inspect
+  # exactly what the wrapper passes through without needing a real binary.
+  workshop exec -- bash -lc 'printf "#!/usr/bin/env bash\necho \"ARGS: \$*\"\n" > "${SDK}/bin/agy-bin" && chmod +x "${SDK}/bin/agy-bin"'
+
+  # Known subcommands must NOT receive --no-sandbox prepended
+  for sub in install help version; do
+    output=$(workshop exec -- bash -lc "agy $sub" 2>&1 || true)
+    echo "$output" | NOMATCH '\-\-no-sandbox'
+  done
+
+  # A bare invocation (no subcommand) MUST have --no-sandbox injected
+  output=$(workshop exec -- bash -lc 'agy' 2>&1 || true)
+  echo "$output" | MATCH '\-\-no-sandbox'
+
+  # --sandbox flag must suppress --no-sandbox injection even without a subcommand
+  output=$(workshop exec -- bash -lc 'agy --sandbox' 2>&1 || true)
+  echo "$output" | NOMATCH '\-\-no-sandbox'
+
 debug: |
   workshop exec -- bash -lc 'ls -la "${SDK}/bin/"' || true
   workshop exec -- bash -lc 'cat "${SDK}/bin/agy"' || true
+

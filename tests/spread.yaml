@@ -5,7 +5,7 @@ path: /home/ubuntu/project
 backends:
   lxd:
     systems:
-      - ubuntu-24.04:
+      - ubuntu-26.04:
           username: ubuntu
           vm: true
 

@@ -5,4 +5,4 @@ set -euo pipefail
 mkdir -p /home/workshop/.gemini
 
 # Run native setup/install as the workshop user
-"${SDK}/bin/agy" install
+sudo -u workshop --login "${SDK}/bin/agy" install

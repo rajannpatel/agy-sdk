@@ -3,3 +3,9 @@
 
 # spread reuse state (created when a previous run leaves instances around)
 .spread-reuse.yaml
+
+# sdkcraft build lifecycle directories (local --destructive-mode builds)
+.craft/
+parts/
+prime/
+stage/

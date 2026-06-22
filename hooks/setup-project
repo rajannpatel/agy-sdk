@@ -4,5 +4,7 @@ set -euo pipefail
 # Ensure the .gemini directory exists
 mkdir -p /home/workshop/.gemini
 
-# Run native setup/install as the workshop user
-sudo -u workshop --login "${SDK}/bin/agy" install
+# Run native setup/install as the workshop user (skip if already installed)
+if ! sudo -u workshop --login "${SDK}/bin/agy" version &>/dev/null 2>&1; then
+  sudo -u workshop --login "${SDK}/bin/agy" install
+fi

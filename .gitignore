@@ -1,3 +1,9 @@
 # sdkcraft build artifacts
 *.sdk
 .spread-reuse.yaml
+
+# sdkcraft build lifecycle directories
+.craft/
+parts/
+prime/
+stage/

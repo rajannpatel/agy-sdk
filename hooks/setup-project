@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Ensure the .gemini directory exists
+# Authentication and first-run setup happen when the user runs agy.
 mkdir -p /home/workshop/.gemini
-
-# Run native setup/install as the workshop user (skip if already installed)
-if ! sudo -u workshop --login "${SDK}/bin/agy" version &>/dev/null 2>&1; then
-  sudo -u workshop --login "${SDK}/bin/agy" install
-fi

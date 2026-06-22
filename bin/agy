@@ -1,31 +1,90 @@
 #!/usr/bin/env bash
 # Wrapper script for Google Antigravity CLI (agy) inside Canonical Workshop.
 # Automatically applies container-safe flags to run Chromium/browser components.
+set -euo pipefail
 
 ARGS=()
 HAS_SANDBOX=false
 HAS_NO_SANDBOX=false
+HAS_UTILITY_FLAG=false
+COMMAND_TOKEN=""
 IS_SUBCOMMAND=false
+SKIP_NEXT=false
 
 # Known subcommands that don't accept global flags like --no-sandbox
 SUBCOMMANDS=(changelog help install models plugin plugins update)
 
-for arg in "$@"; do
-  if [[ "$arg" == "--sandbox" ]]; then
-    HAS_SANDBOX=true
-  elif [[ "$arg" == "--no-sandbox" ]]; then
-    HAS_NO_SANDBOX=true
-  fi
-  for sub in "${SUBCOMMANDS[@]}"; do
-    if [[ "$arg" == "$sub" ]]; then
-      IS_SUBCOMMAND=true
-    fi
+VALUE_FLAGS=(
+  --add-dir
+  --conversation
+  --log-file
+  --model
+  --print
+  --print-timeout
+  --prompt
+  --prompt-interactive
+  -i
+  -p
+)
+
+contains() {
+  local needle=$1
+  shift
+
+  local item
+  for item in "$@"; do
+    [[ "$item" == "$needle" ]] && return 0
   done
+
+  return 1
+}
+
+for arg in "$@"; do
   ARGS+=("$arg")
+
+  if [[ "$SKIP_NEXT" == "true" ]]; then
+    SKIP_NEXT=false
+    continue
+  fi
+
+  case "$arg" in
+    --sandbox)
+      HAS_SANDBOX=true
+      ;;
+    --no-sandbox)
+      HAS_NO_SANDBOX=true
+      ;;
+    -h|--help|--version)
+      HAS_UTILITY_FLAG=true
+      ;;
+    --*=*)
+      flag_name=${arg%%=*}
+      if contains "$flag_name" "${VALUE_FLAGS[@]}"; then
+        continue
+      fi
+      ;;
+    -*)
+      if contains "$arg" "${VALUE_FLAGS[@]}"; then
+        SKIP_NEXT=true
+      fi
+      ;;
+    *)
+      if [[ -z "$COMMAND_TOKEN" ]]; then
+        COMMAND_TOKEN=$arg
+      fi
+      ;;
+  esac
 done
 
+if [[ -n "$COMMAND_TOKEN" ]] && contains "$COMMAND_TOKEN" "${SUBCOMMANDS[@]}"; then
+  IS_SUBCOMMAND=true
+fi
+
 # Only inject --no-sandbox for interactive/non-interactive modes, not subcommands
-if [[ "$HAS_SANDBOX" == "false" && "$HAS_NO_SANDBOX" == "false" && "$IS_SUBCOMMAND" == "false" ]]; then
+if [[ "$HAS_SANDBOX" == "false" \
+  && "$HAS_NO_SANDBOX" == "false" \
+  && "$HAS_UTILITY_FLAG" == "false" \
+  && "$IS_SUBCOMMAND" == "false" ]]; then
   ARGS=("--no-sandbox" "${ARGS[@]}")
 fi
 

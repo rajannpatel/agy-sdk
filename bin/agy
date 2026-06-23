@@ -7,6 +7,7 @@ ARGS=()
 HAS_SANDBOX=false
 HAS_NO_SANDBOX=false
 HAS_UTILITY_FLAG=false
+HAS_NONINTERACTIVE=false
 COMMAND_TOKEN=""
 IS_SUBCOMMAND=false
 SKIP_NEXT=false
@@ -25,6 +26,15 @@ VALUE_FLAGS=(
   --prompt-interactive
   -i
   -p
+)
+
+# Non-interactive/print modes that don't launch the Electron TUI
+NONINTERACTIVE_FLAGS=(
+  --print
+  --prompt
+  --prompt-interactive
+  -p
+  -i
 )
 
 contains() {
@@ -59,11 +69,17 @@ for arg in "$@"; do
       ;;
     --*=*)
       flag_name=${arg%%=*}
+      if contains "$flag_name" "${NONINTERACTIVE_FLAGS[@]}"; then
+        HAS_NONINTERACTIVE=true
+      fi
       if contains "$flag_name" "${VALUE_FLAGS[@]}"; then
         continue
       fi
       ;;
     -*)
+      if contains "$arg" "${NONINTERACTIVE_FLAGS[@]}"; then
+        HAS_NONINTERACTIVE=true
+      fi
       if contains "$arg" "${VALUE_FLAGS[@]}"; then
         SKIP_NEXT=true
       fi
@@ -80,12 +96,17 @@ if [[ -n "$COMMAND_TOKEN" ]] && contains "$COMMAND_TOKEN" "${SUBCOMMANDS[@]}"; t
   IS_SUBCOMMAND=true
 fi
 
-# Only inject --no-sandbox for interactive/non-interactive modes, not subcommands
+# For bare TUI invocations in a container/headless environment, Electron's
+# Chromium subprocess needs --no-sandbox. Pass it via ELECTRON_EXTRA_LAUNCH_ARGS
+# so it is picked up by Electron's process spawner rather than Go's flag.Parse(),
+# which rejects unknown flags. Do not inject for subcommands, utility flags,
+# explicit sandbox override, or non-interactive print/prompt modes.
 if [[ "$HAS_SANDBOX" == "false" \
   && "$HAS_NO_SANDBOX" == "false" \
   && "$HAS_UTILITY_FLAG" == "false" \
+  && "$HAS_NONINTERACTIVE" == "false" \
   && "$IS_SUBCOMMAND" == "false" ]]; then
-  ARGS=("--no-sandbox" "${ARGS[@]}")
+  export ELECTRON_EXTRA_LAUNCH_ARGS="--no-sandbox${ELECTRON_EXTRA_LAUNCH_ARGS:+ $ELECTRON_EXTRA_LAUNCH_ARGS}"
 fi
 
 # Locate the actual binary (installed as agy-bin in the same bin directory)

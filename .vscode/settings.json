@@ -1,0 +1,6 @@
+{
+  "github.copilot.chat.customInstructions": "AGENTS.md",
+  "cline.customInstructions": "AGENTS.md",
+  "claude.customInstructions": "AGENTS.md",
+  "continue.customInstructions": "AGENTS.md"
+}

@@ -1,0 +1,6 @@
+---
+name: tools
+summary: agy-sdk development tools
+description: |
+  Project-local SDK that installs the agy-sdk build and test toolchain.
+version: "0.1"

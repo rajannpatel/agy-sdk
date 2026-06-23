@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export DEBIAN_FRONTEND=noninteractive
+
+apt-get update
+apt-get install -y \
+  curl \
+  gettext-base \
+  git \
+  python3 \
+  python3-pip \
+  python3-yaml \
+  ripgrep \
+  shellcheck \
+  snapd \
+  sudo \
+  tree \
+  yamllint \
+  wget \
+  yq
+
+systemctl enable --now snapd.socket || true
+systemctl start snapd || true
+
+for _ in $(seq 1 30); do
+  if snap version >/dev/null 2>&1; then
+    break
+  fi
+  sleep 1
+done
+
+snap install sdkcraft --channel=latest/stable --classic

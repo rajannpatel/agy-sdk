@@ -1,0 +1,129 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Workshop: Open Check",
+      "type": "shell",
+      "command": "if ! command -v workshop >/dev/null 2>&1; then echo 'Workshop CLI is not installed or not on PATH.'; echo 'Install Workshop, then run: workshop launch agy-sdk'; exit 1; fi\nif ! workshop run agy-sdk -- doctor; then echo ''; echo 'Workshop is not ready for this checkout.'; echo 'Run: workshop launch agy-sdk'; echo 'If Workshop was already launched before recent SDK changes, run: workshop refresh agy-sdk'; exit 1; fi",
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "presentation": {
+        "clear": true,
+        "panel": "dedicated",
+        "reveal": "always"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Workshop: Launch",
+      "type": "shell",
+      "command": "workshop launch agy-sdk",
+      "presentation": {
+        "panel": "dedicated",
+        "reveal": "always"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Workshop: Doctor",
+      "type": "shell",
+      "command": "workshop run agy-sdk -- doctor",
+      "presentation": {
+        "panel": "dedicated",
+        "reveal": "always"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Workshop: Refresh",
+      "type": "shell",
+      "command": "workshop refresh agy-sdk",
+      "presentation": {
+        "panel": "dedicated",
+        "reveal": "always"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Workshop: Context",
+      "type": "shell",
+      "command": "workshop run agy-sdk -- context",
+      "presentation": {
+        "panel": "dedicated",
+        "reveal": "always"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Workshop: Shell",
+      "type": "shell",
+      "command": "workshop run agy-sdk -- shell",
+      "presentation": {
+        "panel": "dedicated",
+        "reveal": "always"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Workshop: Test",
+      "type": "shell",
+      "command": "workshop run agy-sdk -- test",
+      "presentation": {
+        "panel": "dedicated",
+        "reveal": "always"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Workshop: Test Integration",
+      "type": "shell",
+      "command": "workshop run agy-sdk -- test-integration",
+      "presentation": {
+        "panel": "dedicated",
+        "reveal": "always"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Workshop: Lint",
+      "type": "shell",
+      "command": "workshop run agy-sdk -- lint",
+      "presentation": {
+        "panel": "dedicated",
+        "reveal": "always"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Workshop: Yamllint",
+      "type": "shell",
+      "command": "workshop run agy-sdk -- yamllint",
+      "presentation": {
+        "panel": "dedicated",
+        "reveal": "always"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Workshop: Build",
+      "type": "shell",
+      "command": "workshop run agy-sdk -- build",
+      "presentation": {
+        "panel": "dedicated",
+        "reveal": "always"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Workshop: Clean",
+      "type": "shell",
+      "command": "workshop run agy-sdk -- clean",
+      "presentation": {
+        "panel": "dedicated",
+        "reveal": "always"
+      },
+      "problemMatcher": []
+    }
+  ]
+}

@@ -19,16 +19,12 @@ sdks:
 actions:
   agy-prompt: agy -p "$@"
   agy-sandbox: agy -p "$@" --sandbox
-  agy-desktop: |
-    if [ -z "${WAYLAND_DISPLAY:-}" ] && [ -z "${DISPLAY:-}" ]; then
-      echo "Neither Wayland nor X11 display available; try 'workshop connect dev/agy:desktop'" >&2
-      exit 1
-    fi
-    agy
 ```
 
 This demonstrates a basic environment setup to execute Antigravity CLI tasks
-using `agy`, including reusable actions for headless prompts.
+using `agy`, including reusable actions for headless prompts. Note that `agy`
+is exclusively a Terminal User Interface (TUI) and CLI tool; it does not have a
+standalone desktop graphical application.
 
 ---
 

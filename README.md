@@ -24,7 +24,7 @@ actions:
       echo "Neither Wayland nor X11 display available; try 'workshop connect dev/agy:desktop'" >&2
       exit 1
     fi
-    agy --no-sandbox
+    agy
 ```
 
 This demonstrates a basic environment setup to execute Antigravity CLI tasks

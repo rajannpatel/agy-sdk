@@ -1,0 +1,95 @@
+---
+name: agy-sdk
+base: ubuntu@26.04
+
+sdks:
+  - name: uv
+    channel: latest/stable
+  - name: project-tools
+  - name: agy
+    channel: latest/stable
+  - name: copilot
+    channel: latest/stable
+  - name: kiro
+    channel: latest/beta
+  - name: system
+
+actions:
+  doctor: |
+    echo "==> Toolchain"
+    command -v awk
+    command -v bash
+    command -v curl
+    command -v envsubst
+    command -v git
+    command -v python3
+    command -v sdkcraft
+    command -v shellcheck
+    command -v tree
+    command -v yamllint
+    command -v yq
+    echo "==> SDKcraft"
+    sdkcraft version
+    echo "==> snapd"
+    snap version
+
+  context: |
+    set -euo pipefail
+    echo "==> Repository"
+    git status --short
+    echo
+    echo "==> SDK metadata"
+    yq '.name, .title, .license, ."build-base"' sdkcraft.yaml
+    echo
+    echo "==> Useful actions"
+    yq -r '.actions | keys | .[]' workshop.yaml
+
+  agent-role: |
+    set -euo pipefail
+    exec tools/agent-role "${@:-}"
+
+  shell: |
+    set -euo pipefail
+    if [ "$#" -gt 0 ]; then
+      exec "$@"
+    fi
+
+    export PS1="(workshop:agy-sdk) \w \$ "
+    echo "Workshop shell for agy-sdk"
+    echo "Project commands run here inside the Workshop LXD container."
+    exec bash --noprofile --norc -i
+
+  shellcheck: |
+    set -euo pipefail
+    git ls-files \
+      | xargs -r file --mime-type -Nnf- \
+      | awk -F: '$2 ~ /shellscript/ { print $1 }' \
+      | xargs -r shellcheck --check-sourced --external-sources
+
+  lint: |
+    set -euo pipefail
+    git ls-files \
+      | xargs -r file --mime-type -Nnf- \
+      | awk -F: '$2 ~ /shellscript/ { print $1 }' \
+      | xargs -r shellcheck --check-sourced --external-sources
+
+  yamllint: |
+    yamllint -d "{extends: relaxed, rules: {line-length: disable}}" \
+      sdkcraft.yaml \
+      workshop.yaml
+
+  test: |
+    bash tests/unit/agy-wrapper.sh
+
+  test-integration: |
+    sdkcraft test --destructive-mode "$@"
+
+  handoff-implementer: |
+    set -euo pipefail
+    exec tools/agent-handoff "${@:-}"
+
+  build: |
+    sdkcraft pack --destructive-mode --build-for amd64 "$@"
+
+  clean: |
+    sdkcraft clean "$@"

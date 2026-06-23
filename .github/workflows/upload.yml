@@ -21,9 +21,9 @@ jobs:
       matrix:
         include:
           - platform: '["amd64"]'
-            runner: '["ubuntu-26.04"]'
+            runner: '["ubuntu-24.04"]'
           - platform: '["arm64"]'
-            runner: '["ubuntu-26.04-arm64"]'
+            runner: '["ubuntu-24.04-arm64"]'
     uses: canonical/sdkcraft-actions/.github/workflows/upload.yml@main
     with:
       platforms: ${{ matrix.platform }}
